@@ -1,29 +1,33 @@
 'use strict';
 
 const p = console.log;
-const host = 'http://54.65.34.48:20780'; //ローカルで掲示板を動かす場合の設定
+const host = 'http://3.112.227.41:20780'; //ローカルで掲示板を動かす場合の設定
 
 const registerSubmit = document.getElementById('registerSubmit');
- 
+
 registerSubmit.addEventListener('click', () => {
     const d1 = {
         name: document.getElementById('registerName').value,
         bio: document.getElementById('registerBio').value,
         password: document.getElementById('registerPassword').value
     };
-
-    fetch(host + '/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(d1)
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-});
+    if (document.getElementById('registerName').value.length <= 16 && document.getElementById('registerBio').value.length <= 128) {
+        fetch(host + '/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(d1)
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            p(data);
+        })
+      } 
+      else {
+        p('nameは16文字以内、bioは128文字以内で入力してください');
+      };
+    });
 
 const loginSubmit = document.getElementById('loginSubmit');
  
@@ -53,7 +57,9 @@ const logoutSubmit = document.getElementById('logoutSubmit');
 logoutSubmit.addEventListener('click', () => {
 
     const login_token = localStorage.getItem('login_token');
-    
+    const deletetoken = () => {
+         localStorage.removeItem('login_token');
+    };
     fetch(host + '/logout', {
         method: 'POST',
         headers: {
@@ -65,6 +71,7 @@ logoutSubmit.addEventListener('click', () => {
     .then((data) => {
         p(data);
     })
+deletetoken;
 });
 
 const usersIdGetSubmit = document.getElementById('usersIdGetSubmit');
@@ -74,6 +81,10 @@ usersIdGetSubmit.addEventListener('click', () => {
     const usersIdGet = document.getElementById('usersIdGet').value;
     const login_token = localStorage.getItem('login_token');
 
+  if (document.getElementById('usersIdGet').value === '' || document.getElementById('usersIdGet').value === null) {
+    p('対象データなし');
+  }
+  else {
     fetch(host + '/users/' + usersIdGet, {
         method: 'GET',
         headers: {
@@ -85,6 +96,8 @@ usersIdGetSubmit.addEventListener('click', () => {
     .then((data) => {
         p(data);
     })
+    .catch(p)
+  };
 });
 
 const usersGetSubmit = document.getElementById('usersGetSubmit');
@@ -95,118 +108,32 @@ usersGetSubmit.addEventListener('click', () => {
     const usersGetQ = document.getElementById('usersGetQ').value;
     const usersGetPerPage = document.getElementById('usersGetPerPage').value;
     const usersGetPage = document.getElementById('usersGetPage').value;
+    const url = new URL(host + '/users')
+    const params = url.searchParams
 
-  if (usersGetQ && usersGetPerPage && usersGetPage) {
-    fetch(host + '/users?q=' + usersGetQ + '&per_page=' + usersGetPerPage + '&page=' + usersGetPage , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-}
-else if(usersGetQ && usersGetPerPage) {
-    fetch(host + '/users?q=' + usersGetQ + '&per_page=' + usersGetPerPage, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(usersGetQ && usersGetPage) {
-    fetch(host + '/users?q=' + usersGetQ + '&page=' + usersGetPage, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(usersGetPerPage && usersGetPage) {
-    fetch(host + '/users?per_page=' + usersGetPerPage + '&page=' + usersGetPage, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(usersGetQ) {
-    fetch(host + '/users?q=' + usersGetQ , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(usersGetPerPage) {
-    fetch(host + '/users?per_page=' + usersGetPerPage , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(usersGetPage) {
-    fetch(host + '/users?page=' + usersGetPage , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else {
-    fetch(host + '/users', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
+  if (usersGetQ !== '' && usersGetQ !== null) {
+    params.append('q', usersGetQ)
+  };
+  if(usersGetPerPage !== '' && usersGetPerPage !== null && usersGetPerPage > 0) {
+    params.append('per_page', usersGetPerPage)
+  };
+  if(usersGetPage !== '' && usersGetPage !== null && usersGetPage > 0) {
+    params.append('page', usersGetPage)
+  };
+
+  p(url.toString());
+
+fetch(url.toString() , {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + login_token
+    },
+})
+.then((response) => response.json())
+.then((data) => {
+    p(data);
+})
 });
 
 const usersDeleteSubmit = document.getElementById('usersDeleteSubmit');
@@ -237,6 +164,10 @@ usersEditSubmit.addEventListener('click', () => {
 
     const login_token = localStorage.getItem('login_token');
 
+  if (document.getElementById('usersEditBio').value.length > 128) {
+        p('bioは128文字以内で入力してください');
+    }
+　else {
     fetch(host + '/users', {
         method: 'PATCH',
         headers: {
@@ -249,4 +180,5 @@ usersEditSubmit.addEventListener('click', () => {
     .then((data) => {
         p(data);
     })
+  };
 });
