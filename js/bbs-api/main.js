@@ -1,7 +1,7 @@
 'use strict';
 
 const p = console.log;
-const host = 'http://3.112.227.41:20780'; //ローカルで掲示板を動かす場合の設定
+const host = 'http://54.64.209.74:20780'; //ローカルで掲示板を動かす場合の設定
 
 const registerSubmit = document.getElementById('registerSubmit');
 
@@ -23,7 +23,8 @@ registerSubmit.addEventListener('click', () => {
         .then((data) => {
             p(data);
         })
-      } 
+        .catch(error => p(error.messagge));
+    } 
       else {
         p('nameは16文字以内、bioは128文字以内で入力してください');
       };
@@ -50,6 +51,7 @@ loginSubmit.addEventListener('click', () => {
         localStorage.setItem('login_token' , data['token']);
         p(localStorage);
     })
+    .catch(error => p(error.messagge));
 });
 
 const logoutSubmit = document.getElementById('logoutSubmit');
@@ -57,9 +59,8 @@ const logoutSubmit = document.getElementById('logoutSubmit');
 logoutSubmit.addEventListener('click', () => {
 
     const login_token = localStorage.getItem('login_token');
-    const deletetoken = () => {
-         localStorage.removeItem('login_token');
-    };
+    localStorage.removeItem('login_token');
+try {
     fetch(host + '/logout', {
         method: 'POST',
         headers: {
@@ -69,9 +70,12 @@ logoutSubmit.addEventListener('click', () => {
     })
     .then((response) => response.json())
     .then((data) => {
-        p(data);
+        p(data);    
     })
-deletetoken;
+}    
+catch(e) {
+    p('エラー');
+}
 });
 
 const usersIdGetSubmit = document.getElementById('usersIdGetSubmit');
@@ -141,7 +145,7 @@ const usersDeleteSubmit = document.getElementById('usersDeleteSubmit');
 usersDeleteSubmit.addEventListener('click', () => {
 
     const login_token = localStorage.getItem('login_token');
-
+try {
     fetch(host + '/users', {
         method: 'DELETE',
         headers: {
@@ -153,6 +157,10 @@ usersDeleteSubmit.addEventListener('click', () => {
     .then((data) => {
         p(data);
     })
+}
+catch(e) {
+    p('エラー');
+}    
 });
 
 const usersEditSubmit = document.getElementById('usersEditSubmit');
@@ -180,5 +188,7 @@ usersEditSubmit.addEventListener('click', () => {
     .then((data) => {
         p(data);
     })
+    .catch(error => p(error.messagge));
   };
 });
+
