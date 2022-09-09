@@ -26,126 +26,40 @@ threadsPostSubmit.addEventListener('click', () => {
     })
 });
 
-const threadsGetSubmit = document.getElementById('threadsGetSubmit');
+const threadsGetSubmit = document.querySelector('#threadsGetSubmit');
 
 threadsGetSubmit.addEventListener('click', () => {
 
     const login_token = localStorage.getItem('login_token');
-    const threadsGetQ = document.getElementById('threadsGetQ').value;
-    const threadsGetPerPage = document.getElementById('threadsGetPerPage').value;
-    const threadsGetPage = document.getElementById('threadsGetPage').value;
+    const threadsGetQ = document.querySelector('#threadsGetQ').value;
+    const threadsGetPerPage = document.querySelector('#threadsGetPerPage').value;
+    const threadsGetPage = document.querySelector('#threadsGetPage').value;
+    const url = new URL(host + '/threads')
+    const params = url.searchParams
 
-  if (threadsGetQ && threadsGetPerPage && threadsGetPage) {
-    fetch(host + '/threads?q=' + threadsGetQ + '&per_page=' + threadsGetPerPage + '&page=' + threadsGetPage , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-}
-else if(threadsGetQ && threadsGetPerPage) {
-    fetch(host + '/threads?q=' + threadsGetQ + '&per_page=' + threadsGetPerPage, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(threadsGetQ && threadsGetPage) {
-    fetch(host + '/threads?q=' + threadsGetQ + '&page=' + threadsGetPage, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(threadsGetPerPage && threadsGetPage) {
-    fetch(host + '/threads?per_page=' + threadsGetPerPage + '&page=' + threadsGetPage, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(threadsGetQ) {
-    fetch(host + '/threads?q=' + threadsGetQ , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(threadsGetPerPage) {
-    fetch(host + '/threads?per_page=' + threadsGetPerPage , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else if(threadsGetPage) {
-    fetch(host + '/threads?page=' + threadsGetPage , {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
-else {
-    fetch(host + '/threads', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + login_token
-        },
-    })
-    .then((response) => response.json())
-    .then((data) => {
-        p(data);
-    })
-    return;
-}
+  if (threadsGetQ !== '' && threadsGetQ !== null) {
+    params.append('q', threadsGetQ)
+  };
+  if(threadsGetPerPage !== '' && threadsGetPerPage !== null && threadsGetPerPage > 0) {
+    params.append('per_page', threadsGetPerPage)
+  };
+  if(threadsGetPage !== '' && threadsGetPage !== null && threadsGetPage > 0) {
+    params.append('page', threadsGetPage)
+  };
+
+  p(url.toString());
+
+fetch(url.toString() , {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + login_token
+    },
+})
+.then((response) => response.json())
+.then((data) => {
+    p(data);
+})
 });
 
 const threadsIdGetSubmit = document.getElementById('threadsIdGetSubmit');
